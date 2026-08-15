@@ -3,6 +3,7 @@ $settings = lu_event_settings();
 $event_name = $settings['event_name'] ?? get_bloginfo( 'name' );
 $restaurant_name = $settings['restaurant_name'] ?? '';
 $logo_url = lu_event_media_url( $settings['logo'] ?? 0 );
+$logo_width = max( 100, min( 420, absint( $settings['logo_width'] ?? 260 ) ) );
 $default_theme = 'light' === ( $settings['default_theme'] ?? '' ) ? 'light' : 'dark';
 ?><!doctype html>
 <html <?php language_attributes(); ?> data-theme="<?php echo esc_attr( $default_theme ); ?>">
@@ -16,7 +17,7 @@ $default_theme = 'light' === ( $settings['default_theme'] ?? '' ) ? 'light' : 'd
 <?php wp_body_open(); ?>
 <a class="skip-link" href="#main-content"><?php esc_html_e( 'Skip to content', 'lu-event' ); ?></a>
 <header class="site-header" data-site-header>
-	<a class="event-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( $event_name ); ?>">
+	<a class="event-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( $event_name ); ?>" style="--event-logo-width:<?php echo esc_attr( $logo_width ); ?>px">
 		<?php if ( $logo_url ) : ?>
 			<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $event_name ); ?>">
 		<?php else : ?>

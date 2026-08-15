@@ -1,4 +1,5 @@
 <?php
+$network_ready = class_exists( 'LU_Event_Network' );
 $can_build = is_user_logged_in() && ( is_super_admin() || current_user_can( 'lu_build_event_sites' ) );
 ?><!doctype html>
 <html <?php language_attributes(); ?>>
@@ -20,6 +21,19 @@ $can_build = is_user_logged_in() && ( is_super_admin() || current_user_can( 'lu_
 		</section>
 		<div class="login-art" role="img" aria-label="<?php esc_attr_e( 'Loyalty Untapped brand mark', 'lu-events-generator' ); ?>"><img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/lu-mark.svg' ); ?>" alt=""></div>
 	</main>
+<?php elseif ( ! $network_ready ) : ?>
+	<main class="login-shell">
+		<section class="login-panel setup-panel">
+			<img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/lu-horizontal-orange.png' ); ?>" alt="Loyalty Untapped">
+			<p class="kicker"><?php esc_html_e( 'One setup step left', 'lu-events-generator' ); ?></p>
+			<h1><?php esc_html_e( 'The provisioning layer is not loaded.', 'lu-events-generator' ); ?></h1>
+			<p><?php esc_html_e( 'Install both Event Network files directly under wp-content/mu-plugins, then reload this page:', 'lu-events-generator' ); ?></p>
+			<code>wp-content/mu-plugins/lu-event-network.php</code>
+			<code>wp-content/mu-plugins/lu-event-network/class-lu-event-network.php</code>
+			<p><small><?php esc_html_e( 'In Network Admin → Plugins, “Loyalty Untapped Event Network” should appear under Must-Use.', 'lu-events-generator' ); ?></small></p>
+		</section>
+		<div class="login-art" role="img" aria-label="<?php esc_attr_e( 'Loyalty Untapped brand mark', 'lu-events-generator' ); ?>"><img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/lu-mark.svg' ); ?>" alt=""></div>
+	</main>
 <?php elseif ( ! $can_build ) : ?>
 	<main class="login-shell"><section class="login-panel"><img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/lu-horizontal-orange.png' ); ?>" alt="Loyalty Untapped"><h1><?php esc_html_e( 'You’re signed in, but this studio isn’t on your keyring yet.', 'lu-events-generator' ); ?></h1><p><?php esc_html_e( 'Ask a network administrator to assign the Event Site Builder role.', 'lu-events-generator' ); ?></p><a class="generator-button generator-button--primary" href="<?php echo esc_url( wp_logout_url( home_url( '/' ) ) ); ?>"><?php esc_html_e( 'Sign out', 'lu-events-generator' ); ?></a></section></main>
 <?php else : ?>
@@ -38,6 +52,7 @@ $can_build = is_user_logged_in() && ( is_super_admin() || current_user_can( 'lu_
 					<label><?php esc_html_e( 'Event name', 'lu-events-generator' ); ?><input name="event_name" value="Cantina Challenge" required></label>
 					<label><?php esc_html_e( 'Child-site address', 'lu-events-generator' ); ?><span class="slug-input"><span><?php echo esc_html( wp_parse_url( network_home_url(), PHP_URL_HOST ) ); ?>/</span><input name="site_slug" value="cantina-challenge" required></span></label>
 					<label class="file-field"><span><?php esc_html_e( 'Event logo (optional)', 'lu-events-generator' ); ?></span><input type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml"><small><?php esc_html_e( 'SVG, PNG, JPG, or WebP', 'lu-events-generator' ); ?></small></label>
+					<label class="range-field"><?php esc_html_e( 'Header logo width', 'lu-events-generator' ); ?><span><input type="range" name="logo_width" min="100" max="420" step="10" value="260"><output>260px</output></span><small><?php esc_html_e( 'Increase this for a wide horizontal logo; reduce it for a compact mark.', 'lu-events-generator' ); ?></small></label>
 				</fieldset>
 
 				<fieldset>

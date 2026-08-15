@@ -40,8 +40,8 @@ function lu_event_theme_asset( string $path ): string {
 function lu_event_enqueue_assets(): void {
 	$settings = lu_event_settings();
 	wp_enqueue_style( 'dashicons' );
-	wp_enqueue_style( 'lu-event', lu_event_theme_asset( 'css/event.css' ), array( 'dashicons' ), '0.1.0' );
-	wp_enqueue_script( 'lu-event', lu_event_theme_asset( 'js/event.js' ), array(), '0.1.0', true );
+	wp_enqueue_style( 'lu-event', lu_event_theme_asset( 'css/event.css' ), array( 'dashicons' ), '0.2.0' );
+	wp_enqueue_script( 'lu-event', lu_event_theme_asset( 'js/event.js' ), array(), '0.2.0', true );
 	wp_script_add_data( 'lu-event', 'strategy', 'defer' );
 
 	$primary = sanitize_hex_color( $settings['primary_color'] ?? '' ) ?: '#f05a24';

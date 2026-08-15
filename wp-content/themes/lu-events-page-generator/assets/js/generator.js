@@ -14,6 +14,11 @@
   const field = (name) => form.elements[name];
   const value = (name) => field(name)?.value?.trim() || '';
   const setText = (selector, text) => { const node = $(selector); if (node) node.textContent = text; };
+  const apiSetupMessage = 'The Event Network API is not registered on this WordPress install. Copy both lu-event-network.php and the lu-event-network folder into wp-content/mu-plugins, then confirm the plugin appears under Network Admin → Plugins → Must-Use.';
+  const apiError = (response, body, fallback) => {
+    if (!LUBuilder.networkReady || body?.code === 'rest_no_route' || response.status === 404) return apiSetupMessage;
+    return body?.message || fallback;
+  };
   const readLocations = () => $$('.location-editor', editors).map((editor) => {
     const data = {};
     $$('[data-location-field]', editor).forEach((input) => { data[input.dataset.locationField] = input.value.trim(); });
@@ -23,6 +28,7 @@
   const settings = () => ({
     restaurant_name: value('restaurant_name'),
     event_name: value('event_name'),
+    logo_width: Number(field('logo_width')?.value) || 260,
     eyebrow: value('eyebrow'),
     headline: value('headline'),
     intro: value('intro'),
@@ -43,6 +49,7 @@
     preview.style.setProperty('--p-primary', data.primary_color);
     preview.style.setProperty('--p-accent', data.accent_color);
     preview.style.setProperty('--p-highlight', data.highlight_color);
+    preview.style.setProperty('--p-logo-width', `${Math.round(data.logo_width / 2)}px`);
     preview.dataset.previewTheme = data.default_theme;
     setText('[data-preview-event]', data.event_name || 'Event night');
     setText('[data-preview-restaurant]', data.restaurant_name || 'Restaurant');
@@ -51,6 +58,8 @@
     setText('[data-preview-intro]', data.intro);
     setText('[data-preview-schedule]', `Live every ${data.schedule_day} · ${data.schedule_time} · Teams of ${data.team_size}`);
     setText('[data-preview-url]', `${location.host}/${value('site_slug') || 'event-night'}/`);
+    const logoWidthOutput = field('logo_width')?.parentElement?.querySelector('output');
+    if (logoWidthOutput) logoWidthOutput.value = `${data.logo_width}px`;
     $$('input[type="color"]', form).forEach((input) => { const output = input.parentElement.querySelector('output'); if (output) output.value = input.value; });
   };
 
@@ -69,7 +78,8 @@
     if (input.name === 'app_screenshot') $('[data-preview-app]').src = url;
     if (input.name === 'logo') {
       const brand = $('[data-preview-logo]');
-      brand.innerHTML = `<img src="${url}" alt=""><span><strong>${value('event_name')}</strong><small>${value('restaurant_name')}</small></span>`;
+      brand.classList.add('has-custom-logo');
+      brand.innerHTML = `<img src="${url}" alt="">`;
     }
   }));
 
@@ -104,7 +114,7 @@
     try {
       const response = await fetch(`${LUBuilder.restUrl}/sites`, { headers: { 'X-WP-Nonce': LUBuilder.nonce } });
       const sites = await response.json();
-      if (!response.ok) throw new Error(sites.message || 'Could not load sites.');
+      if (!response.ok) throw new Error(apiError(response, sites, 'Could not load sites.'));
       target.innerHTML = sites.length ? sites.map((site) => `<article class="recent-site"><strong>${site.name}</strong><small>${site.url}</small><div class="recent-site__links"><a href="${site.url}" target="_blank" rel="noopener">View</a><a href="${site.edit_url}">Edit</a></div></article>`).join('') : '<p class="loading-line">Your first event site will appear here.</p>';
     } catch (error) {
       target.innerHTML = `<p class="launch-result__error">${error.message}</p>`;
@@ -128,7 +138,7 @@
     try {
       const response = await fetch(`${LUBuilder.restUrl}/sites`, { method: 'POST', headers: { 'X-WP-Nonce': LUBuilder.nonce }, body: payload });
       const site = await response.json();
-      if (!response.ok) throw new Error(site.message || 'The event site could not be created.');
+      if (!response.ok) throw new Error(apiError(response, site, 'The event site could not be created.'));
       result.innerHTML = `<div class="launch-result__success"><strong>${site.name} is live.</strong> <a href="${site.url}" target="_blank" rel="noopener">Open the event site</a> or <a href="${site.edit_url}">edit its ACF settings</a>.</div>`;
       loadSites();
     } catch (error) {

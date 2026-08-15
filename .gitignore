@@ -23,7 +23,7 @@ wp-content/*
 
 # ignore all mu-plugins, plugins, and themes
 # unless explicitly tracked at the end of this file
-wp-content/mu-plugins/*
+#wp-content/mu-plugins/*
 #wp-content/plugins/*
 wp-content/themes/*
 

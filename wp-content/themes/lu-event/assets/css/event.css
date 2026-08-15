@@ -19,7 +19,7 @@ button,input{font:inherit}
 
 .site-header{position:sticky;top:0;z-index:100;min-height:var(--header-height);display:grid;grid-template-columns:minmax(220px,1fr) auto minmax(180px,1fr);align-items:center;gap:2rem;padding:1rem max(2rem,calc((100vw - var(--shell))/2));background:color-mix(in srgb,var(--page) 94%,transparent);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
 .event-brand{display:flex;align-items:center;gap:.75rem;text-decoration:none;min-width:0;width:max-content}
-.event-brand>img:not(.event-brand__mark){width:auto;height:56px;max-width:260px;object-fit:contain}
+.event-brand>img:not(.event-brand__mark){width:auto;height:56px;max-width:min(var(--event-logo-width,260px),42vw);object-fit:contain}
 .event-brand__mark{width:42px;height:42px;filter:invert(41%) sepia(96%) saturate(2784%) hue-rotate(1deg) brightness(99%) contrast(103%)}
 .event-brand span{display:flex;flex-direction:column;line-height:1.05}
 .event-brand strong{font:800 1.05rem/1.05 var(--heading);text-transform:uppercase;max-width:15rem}
@@ -110,7 +110,7 @@ button,input{font:inherit}
 	.locations__grid{gap:2rem}.steps article{padding-inline:1rem}
 }
 @media (max-width:760px){
-	body.admin-bar .site-header{top:46px}.site-header{min-height:74px;padding:.8rem 1rem}.event-brand strong{font-size:.85rem}.event-brand small{font-size:.68rem}.event-brand__mark{width:34px;height:34px}.theme-toggle>.dashicons{display:none}
+	body.admin-bar .site-header{top:46px}.site-header{min-height:74px;padding:.8rem 1rem}.event-brand>img:not(.event-brand__mark){height:44px;max-width:min(var(--event-logo-width,260px),58vw)}.event-brand strong{font-size:.85rem}.event-brand small{font-size:.68rem}.event-brand__mark{width:34px;height:34px}.theme-toggle>.dashicons{display:none}
 	.live-banner{margin:1rem;letter-spacing:.1em;padding:.85rem;font-size:.72rem}
 	.hero--sticky{display:flex;flex-direction:column;gap:2.5rem;min-height:0;padding:3.5rem 1.25rem 230px}.hero h1{font-size:clamp(3rem,15vw,5rem);max-width:10ch}.hero__intro{font-size:1.05rem}.hero__copy{width:100%}.hero__actions .button{width:100%}
 	.phone-scene{width:100%}.phone{width:min(78vw,350px)}.phone-scene__motif{right:-30%;width:110vw}.hero__crowd{top:auto;bottom:0;height:210px}
