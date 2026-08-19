@@ -65,7 +65,7 @@ button,input{font:inherit}
 
 .section-shell{width:min(calc(100% - 4rem),var(--shell));margin-inline:auto}
 .how-it-works{padding:5rem 0 5.5rem;background:var(--surface)}
-.how-it-works h2,.locations h2,.app-cta h2{margin:0;font:400 clamp(3rem,5vw,5rem)/.9 var(--display);letter-spacing:.01em;text-transform:uppercase}
+.section-shell h2{margin:0;font:400 clamp(3rem,5vw,5rem)/.9 var(--display);letter-spacing:.01em;text-transform:uppercase}
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:3.25rem}
 .steps article{position:relative;padding:0 clamp(1rem,2.5vw,2.5rem);text-align:center}
 .steps article+article{border-left:1px solid var(--border)}
