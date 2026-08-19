@@ -9,6 +9,7 @@
   const editors = $('[data-location-editors]');
   const slugInput = form.elements.site_slug;
   let slugWasEdited = false;
+  let restNonce = LUBuilder.nonce;
 
   const slugify = (value) => value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   const field = (name) => form.elements[name];
@@ -17,7 +18,33 @@
   const apiSetupMessage = 'The Event Network API is not registered on this WordPress install. Copy both lu-event-network.php and the lu-event-network folder into wp-content/mu-plugins, then confirm the plugin appears under Network Admin → Plugins → Must-Use.';
   const apiError = (response, body, fallback) => {
     if (!LUBuilder.networkReady || body?.code === 'rest_no_route' || response.status === 404) return apiSetupMessage;
+    if (response.status === 401 || response.status === 403) return 'The Event Network API is loaded, but WordPress did not recognize an authorized builder session. Sign out and back in on the same HTTPS hostname, and confirm your account is a Network Super Admin or Event Site Builder.';
     return body?.message || fallback;
+  };
+  const readJson = async (response) => {
+    try { return await response.json(); } catch (error) { return {}; }
+  };
+  const refreshRestNonce = async () => {
+    try {
+      const response = await fetch(LUBuilder.nonceUrl, { credentials: 'same-origin', cache: 'no-store', headers: { Accept: 'application/json' } });
+      const payload = await readJson(response);
+      if (!response.ok || !payload?.success || !payload?.data?.nonce) return false;
+      restNonce = payload.data.nonce;
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+  const apiFetch = async (options = {}) => {
+    const send = () => fetch(LUBuilder.sitesUrl, {
+      ...options,
+      credentials: 'same-origin',
+      cache: 'no-store',
+      headers: { ...(options.headers || {}), 'X-WP-Nonce': restNonce }
+    });
+    let response = await send();
+    if ((response.status === 401 || response.status === 403) && await refreshRestNonce()) response = await send();
+    return response;
   };
   const readLocations = () => $$('.location-editor', editors).map((editor) => {
     const data = {};
@@ -112,8 +139,8 @@
   const loadSites = async () => {
     const target = $('[data-recent-sites]');
     try {
-      const response = await fetch(`${LUBuilder.restUrl}/sites`, { headers: { 'X-WP-Nonce': LUBuilder.nonce } });
-      const sites = await response.json();
+      const response = await apiFetch();
+      const sites = await readJson(response);
       if (!response.ok) throw new Error(apiError(response, sites, 'Could not load sites.'));
       target.innerHTML = sites.length ? sites.map((site) => `<article class="recent-site"><strong>${site.name}</strong><small>${site.url}</small><div class="recent-site__links"><a href="${site.url}" target="_blank" rel="noopener">View</a><a href="${site.edit_url}">Edit</a></div></article>`).join('') : '<p class="loading-line">Your first event site will appear here.</p>';
     } catch (error) {
@@ -136,8 +163,8 @@
       if (file) payload.append(name, file, file.name);
     });
     try {
-      const response = await fetch(`${LUBuilder.restUrl}/sites`, { method: 'POST', headers: { 'X-WP-Nonce': LUBuilder.nonce }, body: payload });
-      const site = await response.json();
+      const response = await apiFetch({ method: 'POST', body: payload });
+      const site = await readJson(response);
       if (!response.ok) throw new Error(apiError(response, site, 'The event site could not be created.'));
       result.innerHTML = `<div class="launch-result__success"><strong>${site.name} is live.</strong> <a href="${site.url}" target="_blank" rel="noopener">Open the event site</a> or <a href="${site.edit_url}">edit its ACF settings</a>.</div>`;
       loadSites();
