@@ -50,8 +50,10 @@ $location_image = lu_event_media_url( $settings['location_image'] ?? 0, lu_event
 			<h2>Get ready to play!</h2>
 			<p>This will be information about the game and how to play, once it is provided to me. For now all you get is this paragraph of placeholder text, but once the content is here we can make it pretty and add icons and fun visuals.</p>
 			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tristique, ligula at egestas molestie, purus odio imperdiet augue, vel mattis sem ipsum vel diam. Sed dictum nulla sed erat blandit, id pulvinar sapien maximus. Vivamus nisi nibh, porta egestas lacus quis, auctor accumsan erat. Proin dolor nunc, congue at urna pulvinar, malesuada pretium arcu.</p>
-			<h3>Need help?</h3>
-			<p>This will be a place where we can talk about all the ways to get support, report bugs, ask questions, etc. It will be amazing, once I have that to add into this section. It will probably also include links to <a href="#"><b>get support here</b></a>, or <a href="#">report a bug</a>. </p>
+			<div class="narrow callout">
+				<h3>Need help?</h3>
+				<p>This will be a place where we can talk about all the ways to get support, report bugs, ask questions, etc. It will be amazing, once I have that to add into this section. It will probably also include links to <a href="#"><b>get support here</b></a>, or <a href="#">report a bug</a>. </p>
+			</div>
 		</div>
 	</section>
 	<section class="how-it-works" id="league">
